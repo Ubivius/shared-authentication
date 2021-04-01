@@ -65,7 +65,6 @@ func Middleware(next http.Handler) http.Handler {
 			return
 		}
 		_, err := verifier.Verify(ctx, parts[1])
-		log.Println(err)
 		if err != nil {
 			log.Println("Error while trying to access ressource")
 			w.WriteHeader(400)
