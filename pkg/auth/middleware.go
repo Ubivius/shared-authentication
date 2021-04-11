@@ -20,7 +20,7 @@ func init() {
 	ctx = context.Background()
 	provider, err := oidc.NewProvider(ctx, configURL)
 	if err != nil {
-		log.Println("Auth panic")
+		log.Error("Auth panic")
 		panic(err)
 	}
 
@@ -49,7 +49,7 @@ func Middleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		rawAccessToken := r.Header.Get("Authorization")
 		if rawAccessToken == "" {
-			log.Println("No access token provided")
+			log.Error("No access token provided")
 			w.WriteHeader(http.StatusForbidden)
 			_, err := w.Write([]byte("403 Forbidden"))
 			if err != nil {
@@ -60,13 +60,13 @@ func Middleware(next http.Handler) http.Handler {
 
 		parts := strings.Split(rawAccessToken, " ")
 		if len(parts) != 2 {
-			log.Println("Missing token parts")
+			log.Error("Missing token parts")
 			w.WriteHeader(400)
 			return
 		}
 		_, err := verifier.Verify(ctx, parts[1])
 		if err != nil {
-			log.Println("Error while trying to access ressource")
+			log.Error("Error while trying to access ressource")
 			w.WriteHeader(400)
 			_, err = w.Write([]byte("400 Bad Request"))
 			if err != nil {
@@ -74,7 +74,7 @@ func Middleware(next http.Handler) http.Handler {
 			}
 			return
 		}
-		log.Println("serving http")
+		log.Info("Serving http")
 		next.ServeHTTP(w, r)
 	})
 }
