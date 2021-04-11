@@ -1,7 +1,7 @@
 package log
 
 import (
-	logf "sigs.k8s.io/shared-authentication/pkg/log"
+	logf "sigs.k8s.io/controller-runtime/pkg/log"
 )
 
 // MLog is a base parent logger for the microservice
