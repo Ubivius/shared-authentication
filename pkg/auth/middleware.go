@@ -6,16 +6,14 @@ import (
 	"strings"
 
 	"github.com/coreos/go-oidc"
-	"golang.org/x/oauth2"
 )
 
-var oauth2Config oauth2.Config
 var verifier *oidc.IDTokenVerifier
 var ctx context.Context
 
 func init() {
 	//Authentication setup
-	configURL := "http://localhost:8080/auth/realms/ubivius"
+	configURL := "http://keycloak/auth/realms/master"
 	ctx = context.Background()
 	provider, err := oidc.NewProvider(ctx, configURL)
 	if err != nil {
@@ -23,23 +21,8 @@ func init() {
 		panic(err)
 	}
 
-	clientID := "ubivius-client"
-	clientSecret := "7d109d2b-524f-4351-bfda-44ecad030eef"
-
-	redirectURL := "http://localhost:9090/ubivius/callback"
-	// Configure an OpenID Connect aware OAuth2 client.
-	oauth2Config = oauth2.Config{
-		ClientID:     clientID,
-		ClientSecret: clientSecret,
-		RedirectURL:  redirectURL,
-		// Discovery returns the OAuth2 endpoints.
-		Endpoint: provider.Endpoint(),
-		// "openid" is a required scope for OpenID Connect flows.
-		Scopes: []string{oidc.ScopeOpenID, "profile", "email"},
-	}
-
 	oidcConfig := &oidc.Config{
-		ClientID: clientID,
+		SkipClientIDCheck: true,
 	}
 	verifier = provider.Verifier(oidcConfig)
 }
